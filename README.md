@@ -95,5 +95,32 @@ Na página da documentação, em withdraw.store, altere o body trocando o parâm
 
 ![Content creation image](https://raw.githubusercontent.com/benjamimWalker/pag-super/master/assets/withdraw.png)
 
+## Estrutura e decisões técnicas adotadas
+
+O projeto foi organizado para permitir integrar várias subadquirentes (SubadqA, SubadqB) de forma padronizada.
+Cada subadquirente tem seu próprio adaptador, mas todos seguem a mesma interface. Assim, a aplicação escolhe automaticamente o provedor certo para cada usuário.
+
+As operações de PIX e saque seguem o mesmo fluxo:
+
+A API cria o registro local da transação.
+
+O adaptador envia a requisição para a subadquirente (mock).
+
+A aplicação recebe o retorno e salva o external_id.
+
+Jobs são usados para simular webhooks do provedor e atualizar o status no banco.
+
+As principais decisões do projeto foram:
+
+Padronizar integrações usando interface + adaptadors.
+
+Separar responsabilidades: controllers cuidam da entrada, adaptadores falam com o provedor, jobs tratam webhooks.
+
+Simular callbacks para reproduzir o comportamento real de uma subadquirente.
+
+Armazenar payloads para facilitar rastreabilidade.
+
+Essa estrutura deixa fácil adicionar novos provedores, testar fluxos reais de callback e manter o código organizado.
+
 [Benjamim] - [benjamim.sousamelo@gmail.com]<br>
 Github: <a href="https://github.com/benjamimWalker">@benjamimWalker</a>
