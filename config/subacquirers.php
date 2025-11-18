@@ -1,4 +1,5 @@
 <?php
+
 return [
     'map' => [
         'subadqa' => \App\Services\SubadqAService::class,

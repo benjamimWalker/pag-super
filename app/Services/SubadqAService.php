@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Contracts\SubacquirerInterface;
 use App\Models\PixTransaction;
-use App\Models\Withdrawal;
 use App\Models\User;
+use App\Models\Withdrawal;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -13,6 +13,7 @@ use RuntimeException;
 class SubadqAService implements SubacquirerInterface
 {
     protected string $base;
+
     protected string $merchant;
 
     public function __construct()
@@ -26,23 +27,22 @@ class SubadqAService implements SubacquirerInterface
     {
         $body = [
             'merchant_id' => $this->merchant,
-            'amount' => (int)round(($payload['amount'] ?? 0) * 100),
+            'amount' => (int) round(($payload['amount'] ?? 0) * 100),
             'currency' => 'BRL',
-            'order_id' => $payload['order_id'] ?? 'order_' . $payload['local_id'] ?? uniqid(),
+            'order_id' => $payload['order_id'] ?? 'order_'.$payload['local_id'] ?? uniqid(),
             'payer' => $payload['payer'] ?? ['name' => $user->name, 'cpf_cnpj' => null],
             'expires_in' => $payload['expires_in'] ?? 3600,
         ];
 
         $response = Http::withHeader('x-mock-response-name', 'SUCESSO_PIX')
-            ->post(rtrim($this->base, '/') . '/pix/create', $body);
+            ->post(rtrim($this->base, '/').'/pix/create', $body);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error("Error while communicating with subacquire $this->base", $response->json());
             throw new RuntimeException($response->body());
         }
 
         $json = $response->json();
-
 
         return [
             'external_id' => $json['transaction_id'] ?? null,
@@ -55,14 +55,14 @@ class SubadqAService implements SubacquirerInterface
         $body = [
             'merchant_id' => $this->merchant,
             'account' => $payload['account'],
-            'amount' => (int)round(($payload['amount'] ?? 0) * 100),
+            'amount' => (int) round(($payload['amount'] ?? 0) * 100),
             'transaction_id' => $payload['transaction_id'] ?? uniqid('tx_'),
         ];
 
         $response = Http::withHeader('x-mock-response-name', 'SUCESSO_WD')
-            ->post(rtrim($this->base, '/') . '/withdraw', $body);
+            ->post(rtrim($this->base, '/').'/withdraw', $body);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error("Error while communicating with subacquire $this->base", $response->json());
             throw new RuntimeException($response->body());
         }
@@ -107,14 +107,14 @@ class SubadqAService implements SubacquirerInterface
             [
                 'event' => 'pix_created',
                 'transaction_id' => $pix->payload['transaction_id'] ?? null,
-                'pix_id' => 'PIX' . $pix->id,
+                'pix_id' => 'PIX'.$pix->id,
                 'status' => 'PENDING',
                 'amount' => $pix->amount,
             ],
             [
                 'event' => 'pix_payment_confirmed',
                 'transaction_id' => $pix->payload['transaction_id'] ?? null,
-                'pix_id' => 'PIX' . $pix->id,
+                'pix_id' => 'PIX'.$pix->id,
                 'status' => 'CONFIRMED',
                 'amount' => $pix->amount,
                 'payer_name' => 'Fulano',
@@ -136,7 +136,7 @@ class SubadqAService implements SubacquirerInterface
             [
                 'event' => 'withdraw_completed',
                 'withdraw_id' => $withdraw->payload['withdraw_id'] ?? null,
-                'transaction_id' => 'T' . $withdraw->id,
+                'transaction_id' => 'T'.$withdraw->id,
                 'status' => 'SUCCESS',
                 'amount' => $withdraw->amount,
                 'completed_at' => now()->toIso8601String(),

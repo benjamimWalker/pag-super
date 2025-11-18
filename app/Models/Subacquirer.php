@@ -10,7 +10,8 @@ class Subacquirer extends Model
         'name',
         'slug',
         'base_url',
-        'config'
+        'config',
     ];
+
     protected $casts = ['config' => 'array'];
 }

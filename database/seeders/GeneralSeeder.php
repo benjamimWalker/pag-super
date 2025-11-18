@@ -1,9 +1,10 @@
 <?php
+
 namespace Database\Seeders;
 
+use App\Models\Subacquirer;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Models\Subacquirer;
 
 class GeneralSeeder extends Seeder
 {
@@ -22,7 +23,7 @@ class GeneralSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'subacquirer_id' => Subacquirer::first()->id
+            'subacquirer_id' => Subacquirer::first()->id,
         ]);
     }
 }
