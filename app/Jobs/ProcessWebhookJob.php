@@ -15,12 +15,9 @@ use Throwable;
 
 class ProcessWebhookJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels, Dispatchable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
-    public function __construct(private readonly string $subacquirerSlug, private readonly array $payload)
-    {
-    }
+    public function __construct(private readonly string $subacquirerSlug, private readonly array $payload) {}
 
     public function handle(SubacquirerManager $manager): void
     {
@@ -29,7 +26,8 @@ class ProcessWebhookJob implements ShouldQueue
         try {
             $normalized = $adapter->normalizeWebhook($this->payload);
         } catch (Throwable $e) {
-            Log::error('Webhook normalization failed: ' . $e->getMessage(), ['payload' => $this->payload]);
+            Log::error('Webhook normalization failed: '.$e->getMessage(), ['payload' => $this->payload]);
+
             return;
         }
 
@@ -38,8 +36,9 @@ class ProcessWebhookJob implements ShouldQueue
                 ->where('external_id', $normalized['external_id'])
                 ->first();
 
-            if (!$pix) {
+            if (! $pix) {
                 Log::warning('PIX not found for webhook', ['external_id' => $normalized['external_id']]);
+
                 return;
             }
 
@@ -47,13 +46,14 @@ class ProcessWebhookJob implements ShouldQueue
                 'status' => $normalized['status'],
                 'payload' => array_merge($pix->payload ?? [], ['last_webhook' => $this->payload]),
             ]);
-        } else if ($normalized['type'] === 'withdraw') {
+        } elseif ($normalized['type'] === 'withdraw') {
             $withdrawal = Withdrawal::select(['id', 'payload'])
                 ->where('external_id', $normalized['external_id'])
                 ->first();
 
-            if (!$withdrawal) {
+            if (! $withdrawal) {
                 Log::warning('Withdrawal not found for webhook', ['external_id' => $normalized['external_id']]);
+
                 return;
             }
 
@@ -66,6 +66,6 @@ class ProcessWebhookJob implements ShouldQueue
 
     public function fail($exception = null)
     {
-        Log::error('Failed to process a webhook of payload: ' . json_encode($this->payload), $exception);
+        Log::error('Failed to process a webhook of payload: '.json_encode($this->payload), $exception);
     }
 }

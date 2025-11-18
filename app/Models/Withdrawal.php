@@ -12,7 +12,7 @@ class Withdrawal extends Model
         'external_id',
         'amount',
         'status',
-        'payload'
+        'payload',
     ];
 
     protected $casts = ['payload' => 'array'];

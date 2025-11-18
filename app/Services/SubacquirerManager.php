@@ -18,7 +18,7 @@ class SubacquirerManager
 
     public function resolve(string $slug): SubacquirerInterface
     {
-        if (!isset($this->map[$slug])) {
+        if (! isset($this->map[$slug])) {
             throw new RuntimeException("Adapter for [$slug] not configured");
         }
 
@@ -29,7 +29,10 @@ class SubacquirerManager
     {
         $subacquirer = $user->subacquirer;
 
-        if (!$subacquirer) throw new RuntimeException('User has no subacquirer assigned');
+        if (! $subacquirer) {
+            throw new RuntimeException('User has no subacquirer assigned');
+        }
+
         return $this->resolve($subacquirer->slug);
     }
 }

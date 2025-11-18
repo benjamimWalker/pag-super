@@ -2,16 +2,13 @@
 
 namespace App\Operations;
 
-use App\Models\PixTransaction;
 use App\Models\User;
 use App\Models\Withdrawal;
 use App\Services\SubacquirerManager;
 
 readonly class CreateWithdrawal
 {
-    public function __construct(private SubacquirerManager $manager)
-    {
-    }
+    public function __construct(private SubacquirerManager $manager) {}
 
     public function execute(array $data): Withdrawal
     {

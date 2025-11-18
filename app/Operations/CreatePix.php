@@ -8,9 +8,7 @@ use App\Services\SubacquirerManager;
 
 readonly class CreatePix
 {
-    public function __construct(private SubacquirerManager $manager)
-    {
-    }
+    public function __construct(private SubacquirerManager $manager) {}
 
     public function execute(array $data): PixTransaction
     {
@@ -33,12 +31,12 @@ readonly class CreatePix
             'order_id' => $data['order_id'] ?? null,
             'local_id' => $pix->id,
             'payer' => $data['payer'] ?? ['name' => $user->name, 'cpf_cnpj' => null],
-            'expires_in' => $data['expires_in'] ?? 3600
+            'expires_in' => $data['expires_in'] ?? 3600,
         ]);
 
         $pix->update([
             'external_id' => $response['external_id'] ?? null,
-            'payload' => $response['raw_response'] ?? $response
+            'payload' => $response['raw_response'] ?? $response,
         ]);
 
         return $pix;

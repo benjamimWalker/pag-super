@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\PixTransaction;
-use App\Models\Withdrawal;
 use App\Models\Subacquirer;
+use App\Models\Withdrawal;
 use App\Services\SubacquirerManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,11 +14,9 @@ use Illuminate\Queue\SerializesModels;
 
 class SimulateWebhookJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels, Dispatchable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private readonly PixTransaction|Withdrawal $resource)
-    {
-    }
+    public function __construct(private readonly PixTransaction|Withdrawal $resource) {}
 
     public function handle(SubacquirerManager $manager): void
     {

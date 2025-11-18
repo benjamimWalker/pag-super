@@ -3,8 +3,8 @@
 namespace App\Contracts;
 
 use App\Models\PixTransaction;
-use App\Models\Withdrawal;
 use App\Models\User;
+use App\Models\Withdrawal;
 
 interface SubacquirerInterface
 {
